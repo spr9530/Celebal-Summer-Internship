@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>File Manager</title>
+</head>
+<body class="bg-gray-100 text-gray-800 p-6">
+  <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow space-y-6">
+    <h1 class="text-2xl font-bold text-center">Node.js File Manager</h1>
+
+    <!-- Create -->
+    <div>
+      <h2 class="text-lg font-semibold mb-2">Create File</h2>
+      <input id="createName" class="input" placeholder="Filename" />
+      <textarea id="createContent" class="input mt-2" rows="4" placeholder="File content"></textarea>
+      <button onclick="createFile()" class="btn mt-2 bg-green-500 hover:bg-green-600">Create</button>
+    </div>
+
+    <!-- Read -->
+    <div>
+      <h2 class="text-lg font-semibold mb-2">Read File</h2>
+      <input id="readName" class="input" placeholder="Filename" />
+      <button onclick="readFile()" class="btn mt-2 bg-blue-500 hover:bg-blue-600">Read</button>
+      <pre id="readOutput" class="mt-2 p-2 bg-gray-100 rounded"></pre>
+    </div>
+
+    <!-- Delete -->
+    <div>
+      <h2 class="text-lg font-semibold mb-2">Delete File</h2>
+      <input id="deleteName" class="input" placeholder="Filename" />
+      <button onclick="deleteFile()" class="btn mt-2 bg-red-500 hover:bg-red-600">Delete</button>
+    </div>
+  </div>
+
+  <style>
+    .input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 0.375rem;
+    }
+    .btn {
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+    }
+  </style>
+
+  <script>
+    async function createFile() {
+      const filename = document.getElementById('createName').value;
+      const content = document.getElementById('createContent').value;
+      const res = await fetch('/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename, content })
+      });
+      alert((await res.json()).message);
+    }
+
+    async function readFile() {
+      const filename = document.getElementById('readName').value;
+      const res = await fetch(`/read?filename=${encodeURIComponent(filename)}`);
+      const data = await res.json();
+      document.getElementById('readOutput').textContent = data.success ? data.content : `Error: ${data.content}`;
+    }
+
+    async function deleteFile() {
+      const filename = document.getElementById('deleteName').value;
+      const res = await fetch(`/delete?filename=${encodeURIComponent(filename)}`, { method: 'DELETE' });
+      alert((await res.json()).message);
+    }
+  </script>
+</body>
+</html>
