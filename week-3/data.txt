@@ -1,0 +1,2 @@
+Hello, this is the content read from the file!
+This shows both callback and async/await in action.
